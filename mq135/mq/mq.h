@@ -6,22 +6,7 @@
 #include <driver/gpio.h>
 #include <sys/time.h>
 
-typedef void(*Ultrasonic_callback)();
-
 #define mq_POLLING_MS         1000
-
-#define ESP_ERR_ULTRASONIC_PING         0x200
-#define ESP_ERR_ULTRASONIC_PING_TIMEOUT 0x201
-#define ESP_ERR_ULTRASONIC_ECHO_TIMEOUT 0x202
-
-#define TRIGGER_LOW_DELAY 4
-#define TRIGGER_HIGH_DELAY 10
-#define PING_TIMEOUT 6000
-#define ROUNDTRIP 58
-
-#define MAX_DISTANCE_CM 500 // 5m max
-#define TRIGGER_GPIO GPIO_NUM_18
-#define ECHO_GPIO GPIO_NUM_19
 
 static inline uint32_t get_time_us()
 {
@@ -35,12 +20,6 @@ static inline uint32_t get_time_us()
 #define RETURN_CRTCAL(MUX, RES) do { portEXIT_CRITICAL(&MUX); return RES; } while(0)
 
 static portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-typedef struct
-{
-    gpio_num_t trigger_pin;
-    gpio_num_t echo_pin;
-} mq_sensor_t;
 
 class mq : public Device {
     private:
@@ -59,9 +38,7 @@ class mq : public Device {
         bool prop_write(int index, char *value);
         // method
         char* random();
-        void callback(Ultrasonic_callback statement);
-        void didEnter(Ultrasonic_callback statement);
-        int distance(void);
+        int value(void);
 };
 
 #endif
